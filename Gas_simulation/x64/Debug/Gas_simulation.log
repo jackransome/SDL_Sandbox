@@ -1,0 +1,4 @@
+﻿  Grid.cpp
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\grid.cpp(36): warning C4244: '+=': conversion from 'float' to 'GLubyte', possible loss of data
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\grid.cpp(37): warning C4244: '+=': conversion from 'float' to 'GLubyte', possible loss of data
+  Gas_simulation.vcxproj -> C:\Users\Jack\Documents\GitHub\SDL_Sandbox\x64\Debug\Gas_simulation.exe
