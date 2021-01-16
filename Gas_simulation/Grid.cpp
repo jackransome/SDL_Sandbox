@@ -20,7 +20,7 @@ void Grid::draw(int _x, int _y){
 		for (int j = 0; j < gridSize; j++)
 		{
 			GameEngine::Color color;
-			if (grid[i][j].isWall)
+			if (grid[i][j][currentState].isWall)
 			{
 				color.r = 200;
 				color.g = 200;
@@ -33,9 +33,9 @@ void Grid::draw(int _x, int _y){
 				color.g = 0;
 				color.b = 0;
 				color.a = 0;
-				color.b += (255 - color.b)*(1 - float(grid[i][j].pressure) / 10);
-				color.r += (255 - color.r)*(float(grid[i][j].pressure) / 10);
-				if (grid[i][j].pressure > 10)
+				color.b += (255 - color.b)*(1 - float(grid[i][j][currentState].pressure) / 10);
+				color.r += (255 - color.r)*(float(grid[i][j][currentState].pressure) / 10);
+				if (grid[i][j][currentState].pressure > 10)
 				{
 					color.r = 255;
 					color.b = 0;
@@ -50,24 +50,43 @@ void Grid::reset(){
 	{
 		for (int j = 0; j < gridSize; j++)
 		{
-			grid[i][j] = Cell();
-			grid[i][j].x = i;
-			grid[i][j].y = j;
-			grid[i][j].isWall = false;
-			grid[i][j].pressure = 0;
+			grid[i][j][currentState] = Cell();
+			grid[i][j][currentState].x = i;
+			grid[i][j][currentState].y = j;
+			grid[i][j][currentState].isWall = false;
+			grid[i][j][currentState].pressure = 0;
+			grid[i][j][nextState] = Cell();
+			grid[i][j][nextState].x = i;
+			grid[i][j][nextState].y = j;
+			grid[i][j][nextState].isWall = false;
+			grid[i][j][nextState].pressure = 0;
 		}
 	}
 }
 void Grid::addWall(int _x, int _y){
-	grid[_x][_y].isWall = true;
+	if (_x < 0 || _y < 0 || _x >= gridSize || _y >= gridSize) {
+		return;
+	}
+	grid[_x][_y][currentState].isWall = true;
+	grid[_x][_y][nextState].isWall = grid[_x][_y][currentState].isWall;
 }
 void Grid::removeWall(int _x, int _y){
-	grid[_x][_y].isWall = false;
+	if (_x < 0 || _y < 0 || _x >= gridSize || _y >= gridSize) {
+		return;
+	}
+	grid[_x][_y][currentState].isWall = false;
+	grid[_x][_y][nextState].isWall = grid[_x][_y][currentState].isWall;
 }
 bool cmd(const Cell* c1, const Cell* c2){
 	return c1->pressure < c2->pressure;
 }
 void Grid::runGasSimulation(){
+	//reseting next state:
+	for (int x = 0; x < gridSize; x++) {
+		for (int y = 0; y < gridSize; y++) {
+			grid[x][y][nextState].pressure = 0;
+		}
+	}
 	for (int x = 0; x < gridSize; x++)
 	{
 		for (int y = 0; y < gridSize; y++)
@@ -76,75 +95,96 @@ void Grid::runGasSimulation(){
 			nextResultValues resultValues = { 0,0,0,0 };
 			int resultInt = 0;
 			float highestDifference = 0;
+			//checking if neighbouring cell has less pressure than the current cell
 			//left
-			if (x > 0 && !grid[x - 1][y].isWall && grid[x - 1][y].pressure < grid[x][y].pressure)
+			if (x > 0 && !grid[x - 1][y][currentState].isWall && grid[x - 1][y][currentState].pressure < grid[x][y][currentState].pressure)
 			{
 				resultInt++;
 				result.left = true;
-				resultValues.left = grid[x][y].pressure - grid[x - 1][y].pressure;
+				resultValues.left = grid[x][y][currentState].pressure - grid[x - 1][y][currentState].pressure;
 			}
 			//right
-			if (x < gridSize - 1 && !grid[x + 1][y].isWall && grid[x + 1][y].pressure < grid[x][y].pressure)
+			if (x < gridSize - 1 && !grid[x + 1][y][currentState].isWall && grid[x + 1][y][currentState].pressure < grid[x][y][currentState].pressure)
 			{
 				resultInt++;
 				result.right = true;
-				resultValues.right = grid[x][y].pressure - grid[x + 1][y].pressure;
+				resultValues.right = grid[x][y][currentState].pressure - grid[x + 1][y][currentState].pressure;
 			}
 			//up
-			if (y < gridSize - 1 && !grid[x][y + 1].isWall && grid[x][y + 1].pressure < grid[x][y].pressure)
+			if (y < gridSize - 1 && !grid[x][y + 1][currentState].isWall && grid[x][y + 1][currentState].pressure < grid[x][y][currentState].pressure)
 			{
 				resultInt++;
 				result.up = true;
-				resultValues.up = grid[x][y].pressure - grid[x][y + 1].pressure;
+				resultValues.up = grid[x][y][currentState].pressure - grid[x][y + 1][currentState].pressure;
 			}
 			//down
-			if (y > 0 && !grid[x][y - 1].isWall && grid[x][y - 1].pressure < grid[x][y].pressure)
+			if (y > 0 && !grid[x][y - 1][currentState].isWall && grid[x][y - 1][currentState].pressure < grid[x][y][currentState].pressure)
 			{
 				resultInt++;
 				result.down = true;
-				resultValues.down = grid[x][y].pressure - grid[x][y - 1].pressure;
+				resultValues.down = grid[x][y][currentState].pressure - grid[x][y - 1][currentState].pressure;
 			}
 			float amount = resultValues.up + resultValues.down + resultValues.left + resultValues.right;
-			float amount2 = grid[x][y].pressure / 2;
+			float amount2 = grid[x][y][currentState].pressure / 2;
+			int resultTotal = result.down + result.left + result.up + result.right;
+
+			//adding the changes
 			if (result.left)
 			{
-				grid[x][y].pressure -= amount2 * resultValues.left / amount;
-				grid[x - 1][y].pressure += amount2 * resultValues.left / amount;
+				grid[x][y][nextState].pressure += - amount2 * resultValues.left / amount;
+				grid[x - 1][y][nextState].pressure += amount2 * resultValues.left / amount;
 			}
 			if (result.right)
 			{
-				grid[x][y].pressure -= amount2 * resultValues.right / amount;
-				grid[x + 1][y].pressure += amount2 * resultValues.right / amount;
+				grid[x][y][nextState].pressure += - amount2 * resultValues.right / amount;
+				grid[x + 1][y][nextState].pressure += amount2 * resultValues.right / amount;
 			}
 			if (result.up)
 			{
-				grid[x][y].pressure -= amount2 * resultValues.up / amount;
-				grid[x][y + 1].pressure += amount2 * resultValues.up / amount;
+				grid[x][y][nextState].pressure += - amount2 * resultValues.up / amount;
+				grid[x][y + 1][nextState].pressure += amount2 * resultValues.up / amount;
 			}
 			if (result.down)
 			{
-				grid[x][y].pressure -= amount2 * resultValues.down / amount;
-				grid[x][y - 1].pressure += amount2 * resultValues.down / amount;
+				grid[x][y][nextState].pressure += - amount2 * resultValues.down / amount;
+				grid[x][y - 1][nextState].pressure += amount2 * resultValues.down / amount;
 			}
 		}
 	}
-
-}
-
-void Grid::setAsWall(int _x, int _y, bool isWall){
-	grid[_x][_y].isWall = isWall;
+	//adding previous state(current) to the changes(next)
+	for (int x = 0; x < gridSize; x++) {
+		for (int y = 0; y < gridSize; y++) {
+			grid[x][y][nextState].pressure += grid[x][y][currentState].pressure;
+		}
+	}
+	if (currentState) {
+		currentState--;
+		nextState++;
+	}
+	else {
+		currentState++;
+		nextState--;
+	}
 }
 
 void Grid::addPressure(int _x, int _y, float _amount){
-	grid[_x][_y].pressure += _amount;
+	if (_x < 0 || _y < 0 || _x >= gridSize || _y >= gridSize) {
+		return;
+	}
+	grid[_x][_y][currentState].pressure += _amount;
+	grid[_x][_y][nextState] = grid[_x][_y][currentState];
 }
-void Grid::reducePressure(int _x, int _y, float _amount){
-	if (grid[_x][_y].pressure > _amount)
+void Grid::reducePressure(int _x, int _y, float _amount) {
+	if (_x < 0 || _y < 0 || _x >= gridSize || _y >= gridSize) {
+		return;
+	}
+	if (grid[_x][_y][currentState].pressure > _amount)
 	{
-		grid[_x][_y].pressure -= _amount;
+		grid[_x][_y][currentState].pressure -= _amount;
 	}
 	else
 	{
-		grid[_x][_y].pressure = 0;
+		grid[_x][_y][currentState].pressure = 0;
 	}
+	grid[_x][_y][nextState] = grid[_x][_y][currentState];
 }

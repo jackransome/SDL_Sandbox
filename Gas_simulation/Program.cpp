@@ -144,25 +144,25 @@ void Program::processInput() {
 	if (_inputManager.isKeyPressed(SDL_BUTTON_LEFT)) {
 		glm::vec2 mouseCoords = _inputManager.getMouseCoords();
 		mouseCoords.y *= -1;
-		grid->addPressure(floor(((10 * 50 + 50) / 2 + mouseCoords.x) / 11), floor(((10 * 50 + 50) / 2 + -mouseCoords.y) / 11), 30);
+		grid->addPressure(floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + mouseCoords.x) / 11), floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + -mouseCoords.y) / 11), 30);
 	}
 	if (_inputManager.isKeyPressed(SDL_BUTTON_MIDDLE)) {
 		glm::vec2 mouseCoords = _inputManager.getMouseCoords();
 		mouseCoords.y *= -1;
-		grid->reducePressure(floor(((10 * 50 + 50) / 2 + mouseCoords.x) / 11), floor(((10 * 50 + 50) / 2 + -mouseCoords.y) / 11), 30);
+		grid->reducePressure(floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + mouseCoords.x) / 11), floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + -mouseCoords.y) / 11), 30);
 	}
 	if (_inputManager.isKeyPressed(SDL_BUTTON_RIGHT)) {
 		if (_inputManager.isKeyPressed(SDLK_LCTRL))
 		{
 			glm::vec2 mouseCoords = _inputManager.getMouseCoords();
 			mouseCoords.y *= -1;
-			grid->removeWall(floor(((10 * 50 + 50) / 2 + mouseCoords.x) / 11), floor(((10 * 50 + 50) / 2 + -mouseCoords.y) / 11));
+			grid->removeWall(floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + mouseCoords.x) / 11), floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + -mouseCoords.y) / 11));
 		}
 		else
 		{
 			glm::vec2 mouseCoords = _inputManager.getMouseCoords();
 			mouseCoords.y *= -1;
-			grid->addWall(floor(((10 * 50 + 50) / 2 + mouseCoords.x) / 11), floor(((10 * 50 + 50) / 2 + -mouseCoords.y) / 11));
+			grid->addWall(floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + mouseCoords.x) / 11), floor(((grid->cellSize * grid->gridSize + grid->gridSize) / 2 + -mouseCoords.y) / 11));
 		}
 	}
 

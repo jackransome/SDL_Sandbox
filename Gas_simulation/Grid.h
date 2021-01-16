@@ -23,9 +23,12 @@ public:
 	void reset();
 	void addWall(int _x, int _y);
 	void removeWall(int _x, int _y);
-private:
 	int cellSize = 10;
-	const int gridSize = 50;
-	Cell grid[50][50];
+	const int gridSize = 100;
+	int currentState = 0;
+	int nextState = 1;
+private:
+
+	Cell grid[100][100][2];
 	GameEngine::SpriteBatch* sb;
 };
