@@ -19,7 +19,7 @@ public:
 	void runGasSimulation();
 	void addPressure(int _x, int _y, float _amount);
 	void reducePressure(int _x, int _y, float _amount);
-	void setAsWall(int _x, int _y, bool isWall);
+	void newSimulation(int _x, int _y);
 	void reset();
 	void addWall(int _x, int _y);
 	void removeWall(int _x, int _y);

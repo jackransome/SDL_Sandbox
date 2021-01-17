@@ -40,7 +40,7 @@ void Program::initSystems() {
 	srand(time(NULL));
 	GameEngine::init();
 
-	_window.create("Game Engine", _screenWidth, _screenHeight, 0);
+	_window.create("Gas simulation", _screenWidth, _screenHeight, 0);
 
 	initShaders();
 

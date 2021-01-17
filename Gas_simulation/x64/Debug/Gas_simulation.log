@@ -1,4 +1,9 @@
-﻿  Grid.cpp
-c:\users\jack\documents\github\sdl_sandbox\gas_simulation\grid.cpp(36): warning C4244: '+=': conversion from 'float' to 'GLubyte', possible loss of data
-c:\users\jack\documents\github\sdl_sandbox\gas_simulation\grid.cpp(37): warning C4244: '+=': conversion from 'float' to 'GLubyte', possible loss of data
+﻿  Program.cpp
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\program.cpp(40): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\program.cpp(74): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\program.cpp(128): warning C4244: 'argument': conversion from 'Sint32' to 'float', possible loss of data
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\program.cpp(147): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\program.cpp(152): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\program.cpp(159): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\jack\documents\github\sdl_sandbox\gas_simulation\program.cpp(165): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   Gas_simulation.vcxproj -> C:\Users\Jack\Documents\GitHub\SDL_Sandbox\x64\Debug\Gas_simulation.exe

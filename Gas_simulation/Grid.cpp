@@ -129,7 +129,7 @@ void Grid::runGasSimulation(){
 			int resultTotal = result.down + result.left + result.up + result.right;
 
 			//adding the changes
-			if (result.left)
+			/*if (result.left)
 			{
 				grid[x][y][nextState].pressure += - amount2 * resultValues.left / amount;
 				grid[x - 1][y][nextState].pressure += amount2 * resultValues.left / amount;
@@ -148,7 +148,8 @@ void Grid::runGasSimulation(){
 			{
 				grid[x][y][nextState].pressure += - amount2 * resultValues.down / amount;
 				grid[x][y - 1][nextState].pressure += amount2 * resultValues.down / amount;
-			}
+			}*/
+			newSimulation(x, y);
 		}
 	}
 	//adding previous state(current) to the changes(next)
@@ -187,4 +188,30 @@ void Grid::reducePressure(int _x, int _y, float _amount) {
 		grid[_x][_y][currentState].pressure = 0;
 	}
 	grid[_x][_y][nextState] = grid[_x][_y][currentState];
+}
+
+void Grid::newSimulation(int _x, int _y){
+	if (!grid[_x][_y][currentState].pressure) {
+		return;
+	}
+
+	if (_x > 0 && !grid[_x - 1][_y][nextState].isWall) {
+		grid[_x][_y][nextState].pressure += -grid[_x][_y][currentState].pressure / 5;
+		grid[_x - 1][_y][nextState].pressure += grid[_x][_y][currentState].pressure / 5;
+	}
+
+	if (_x < gridSize - 1 && !grid[_x + 1][_y][nextState].isWall) {
+		grid[_x][_y][nextState].pressure += -grid[_x][_y][currentState].pressure / 5;
+		grid[_x + 1][_y][nextState].pressure += grid[_x][_y][currentState].pressure / 5;
+	}
+
+	if (_y < gridSize - 1 && !grid[_x][_y + 1][nextState].isWall) {
+		grid[_x][_y][nextState].pressure += -grid[_x][_y][currentState].pressure / 5;
+		grid[_x][_y + 1][nextState].pressure += grid[_x][_y][currentState].pressure / 5;
+	}
+
+	if (_y > 0 && !grid[_x][_y - 1][nextState].isWall) {
+		grid[_x][_y][nextState].pressure += -grid[_x][_y][currentState].pressure / 5;
+		grid[_x][_y - 1][nextState].pressure += grid[_x][_y][currentState].pressure / 5;
+	}
 }
